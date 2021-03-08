@@ -16,6 +16,7 @@ struct bst{ // A binary search tree
     struct app_info record; // Information about the application
     struct bst *left;  // Pointer to the left subtree
     struct bst *right;  // Pointer to the right subtree
+    int insertNode(bst * root, app_info node);
 };
 
 struct categories{

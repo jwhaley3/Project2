@@ -42,10 +42,12 @@ int main() {
     ///////////////////////////////////////////////////////////////////////
     cin.ignore(100,'\n');
     //Loop to create the nodes for the apps
+    cout << numApps;
     for (int i = 0; i < numApps; i++)
     {
         //Create the node using malloc
-        auto * newNode = (struct app_info*)malloc(numCategories * sizeof(struct app_info));
+        struct app_info newNode;
+
 
         //Assign all values to strings that will be later imported into struct app_info
         getline(cin, category);
@@ -60,12 +62,12 @@ int main() {
         price = stof(tempPrice);
 
         //Assign all values into the newNode;
-        strcpy(newNode->category, category.c_str());
-        strcpy(newNode->app_name, name.c_str());
-        strcpy(newNode->version, version.c_str());
-        newNode->size = size;
-        strcpy(newNode->units, units.c_str());
-        newNode->price = price;
+        strcpy(newNode.category, category.c_str());
+        strcpy(newNode.app_name, name.c_str());
+        strcpy(newNode.version, version.c_str());
+        newNode.size = size;
+        strcpy(newNode.units, units.c_str());
+        newNode.price = price;
 
         //Find which BST this should be apart of
         for (int j = 0; j < numCategories; j++)
@@ -76,10 +78,15 @@ int main() {
             }
         }//End of search loop
         //Now we have the category index for app_categories, we can traverse the tree
+        insertNode(app_categories[categoryIndex].root, newNode);
 
-
+        //Node created and added
 
     }//End of numApps for loop
+
+
+    /////////////////////////////////////////////////////////////////
+    //We have the nodes added at this point
 
 
 
