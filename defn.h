@@ -1,5 +1,5 @@
 #define	CAT_NAME_LEN	25
-#define	APP_NAME_LEN	50
+#define	APP_NAME_LEN	70
 #define	VERSION_LEN	10
 #define	UNIT_SIZE	3
 
@@ -16,7 +16,13 @@ struct bst{ // A binary search tree
     struct app_info record; // Information about the application
     struct bst *left;  // Pointer to the left subtree
     struct bst *right;  // Pointer to the right subtree
+    struct bst * newNode(app_info key);
     int insertNode(bst * root, app_info node);
+    void printInorder(bst * node);
+    int addToArray(bst * node, float arr[], int i);
+    void printMax(bst * node);
+    void heapify(float arr[], int n, int i);
+    void heapSort(float arr[], int n);
 };
 
 struct categories{

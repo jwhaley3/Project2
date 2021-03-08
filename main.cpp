@@ -42,7 +42,6 @@ int main() {
     ///////////////////////////////////////////////////////////////////////
     cin.ignore(100,'\n');
     //Loop to create the nodes for the apps
-    cout << numApps;
     for (int i = 0; i < numApps; i++)
     {
         //Create the node using malloc
@@ -78,15 +77,110 @@ int main() {
             }
         }//End of search loop
         //Now we have the category index for app_categories, we can traverse the tree
-        insertNode(app_categories[categoryIndex].root, newNode);
+        app_categories[categoryIndex].root = insertNode(app_categories[categoryIndex].root, newNode);
 
         //Node created and added
 
     }//End of numApps for loop
 
-
     /////////////////////////////////////////////////////////////////
     //We have the nodes added at this point
+    //Read in the number of queries
+    int numQueries;
+    cin >> numQueries;
+    //string will be useful in shortening the length of the if statements.
+    string a = "print-apps";
+    string b = "find";
+
+    string rawCatToSearch, catToSearch, useless, queryType;
+
+    for (int i = 0; i < numQueries; i++)
+    {
+        cin >> queryType;
+        //cout << queryType;
+
+        if (a == queryType)
+        {
+            ///////////////////////////////////////////////////////////
+            //print-apps
+            ///////////////////////////////////////////////////////////
+            //Within this function, we know that there is 2 more inputs
+            //The second one is guranteed to be category, so that doesn't matter
+            //The only question is, after we read that, can we read the last input as readline? //We absolutely can
+            cin >> useless; //Contains "Category"
+            getline(cin, rawCatToSearch);// contains < "Social Networking"> Mind the space at the begginning
+
+            //Manipulating the string using strtok to find the contents between the quotes (")
+            size_t pos = rawCatToSearch.find("\"");
+            catToSearch = rawCatToSearch.substr(pos + 1,rawCatToSearch.length() - 3);
+
+            //catToSearch now contains the correct category with the proper formatting as what's already read into the
+            //array
+            //Find which BST this should be apart of
+            for (int j = 0; j < numCategories; j++)
+            {
+                if (catToSearch == app_categories[j].category) {
+                    categoryIndex = j;
+                    break; //Don't run through everything once we get a match
+                }
+            }//End of search loop
+            cout << "print-apps category \"" << catToSearch << "\"\n";
+            cout << "Category: " << catToSearch << '\n';
+            if (app_categories[categoryIndex].root == nullptr)
+                cout << "Category: " << catToSearch << " no apps found\n";
+            else {
+                printInorder(app_categories[categoryIndex].root);
+            }
+
+
+        }
+        else if (b == queryType)
+        {
+            ////////////////////////////////////////////////
+            //find max price apps <category name>
+            ////////////////////////////////////////////////
+            cin >> useless;
+            cin >> useless;
+            cin >> useless;
+
+            getline(cin, rawCatToSearch);// contains < "Social Networking"> Mind the space at the begginning
+
+            //Manipulating the string using substr to find the contents between the quotes (")
+            size_t pos = rawCatToSearch.find("\"");
+            catToSearch = rawCatToSearch.substr(pos + 1,rawCatToSearch.length() - 3);
+
+            //catToSearch now contains the correct category with the proper formatting as what's already read into the
+            //array
+            //Find which BST this should be apart of
+            for (int j = 0; j < numCategories; j++)
+            {
+                if (catToSearch == app_categories[j].category) {
+                    categoryIndex = j;
+                    break; //Don't run through everything once we get a match
+                }
+            }//End of search loop
+            cout << "find max price apps" << rawCatToSearch << '\n';
+            cout << "Category: " << catToSearch << '\n';
+
+            //Create the array of floats
+            float *heap = (float *) malloc(numApps * sizeof( float ));
+            //Traverse the tree and copy the info
+            addToArray(app_categories[categoryIndex].root, heap, 0);
+
+            //At this point, we have to traverse the tree and print all nodes with the price.
+            buildHeap(heap, numApps);
+            //cout << heap[0];
+            printMax(app_categories[categoryIndex].root, heap[0]);
+
+            free(heap);
+
+
+        }
+        else
+            cout << "no report";
+
+
+    }
 
 
 
