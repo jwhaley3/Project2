@@ -1,10 +1,8 @@
 #include <iostream>
-#include <fstream>
 #include <string>
 #include <cstring>
 #include "defn.h"
 #include "bst.cpp"
-#include <cstring>
 using namespace std;
 
 
@@ -92,12 +90,11 @@ int main() {
     string a = "print-apps";
     string b = "find";
 
+    //Variables that are going to be used within both query operations.
     string rawCatToSearch, catToSearch, useless, queryType;
 
-    for (int i = 0; i < numQueries; i++)
-    {
+    for (int i = 0; i < numQueries; i++) {
         cin >> queryType;
-        //cout << queryType;
 
         if (a == queryType)
         {
@@ -125,12 +122,13 @@ int main() {
                 }
             }//End of search loop
             cout << "print-apps category \"" << catToSearch << "\"\n";
-            cout << "Category: " << catToSearch << '\n';
             if (app_categories[categoryIndex].root == nullptr)
-                cout << "Category: " << catToSearch << " no apps found\n";
+                cout << "Category: \"" << catToSearch << "\" no apps found.\n";
             else {
+                cout << "Category: \"" << catToSearch << "\"\n";
                 printInorder(app_categories[categoryIndex].root);
             }
+            cout << "\n";
 
 
         }
@@ -139,11 +137,12 @@ int main() {
             ////////////////////////////////////////////////
             //find max price apps <category name>
             ////////////////////////////////////////////////
+            //get rid of max price and apps
             cin >> useless;
             cin >> useless;
             cin >> useless;
 
-            getline(cin, rawCatToSearch);// contains < "Social Networking"> Mind the space at the begginning
+            getline(cin, rawCatToSearch);// contains < "Social Networking"> Mind the space at the beginning
 
             //Manipulating the string using substr to find the contents between the quotes (")
             size_t pos = rawCatToSearch.find("\"");
@@ -160,30 +159,41 @@ int main() {
                 }
             }//End of search loop
             cout << "find max price apps" << rawCatToSearch << '\n';
-            cout << "Category: " << catToSearch << '\n';
 
-            //Create the array of floats
-            float *heap = (float *) malloc(numApps * sizeof( float ));
-            //Traverse the tree and copy the info
-            addToArray(app_categories[categoryIndex].root, heap, 0);
+            if (app_categories[categoryIndex].root == nullptr)
+                cout << "Category: \"" << catToSearch << "\" no apps found.\n\n";
+            else {
+                //printInorder(app_categories[categoryIndex].root);
 
-            //At this point, we have to traverse the tree and print all nodes with the price.
-            buildHeap(heap, numApps);
-            //cout << heap[0];
-            printMax(app_categories[categoryIndex].root, heap[0]);
+                //Create the array of floats
+                float *heap = (float *) malloc(numApps * sizeof(float));
+                //Traverse the tree and copy the info
+                addToArray(app_categories[categoryIndex].root, heap, 0);
 
-            free(heap);
+                //At this point, we have to traverse the tree and print all nodes with the price.
+                buildHeap(heap, numApps);
+                printMax(app_categories[categoryIndex].root, heap[0]);
+
+                cout << "\n";
+                //The heap is only used for this query, delete it before moving on to the next query.
+                free(heap);
+            }
 
 
         }
         else
-            cout << "no report";
+            cout << "";
 
 
     }
 
+    //Must destroy the BST
+    for (int i = 0; i < numCategories; i ++) {
+        deleteBST(app_categories[i].root);
+    }
 
-
+    //destroy the initial array as well
     free(app_categories);
 
+    return 0;
 }//End of main

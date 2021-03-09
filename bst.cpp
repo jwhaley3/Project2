@@ -23,6 +23,7 @@ bst* insertNode(bst * node, app_info application)
         node->right = insertNode(node->right, application);
     }
     else
+        //Shouldn't hit this, for error checking
         std::cout <<"yayeet";
 
     return node;
@@ -48,6 +49,7 @@ void printInorder(bst * node)
 }
 struct bst * newNode(app_info key)
 {
+    //Assign info, helper method
     struct bst *temp = new bst;
     temp->record = key;
     temp->right = nullptr;
@@ -57,12 +59,15 @@ struct bst * newNode(app_info key)
 }
 int addToArray(bst * node, float arr[], int i)
 {
+
+    //If that's the end of node, return the position in heap array
     if(node == NULL)
         return i;
 
-
+    //Assign value into the array
     arr[i] = node->record.price;
     i++;
+    //Search the rest of the BST while incrementing i
     if(node->left != NULL)
         i = addToArray(node->left, arr, i);
     if(node->right != NULL)
@@ -120,4 +125,17 @@ void buildHeap(float arr[], int n)
     for (int i = startIdx; i >= 0; i--) {
         heapify(arr, n, i);
     }
+}
+void deleteBST(bst * root)
+{
+    // If node is empty, do nothing
+    if (root == NULL) { return; }
+
+    // Delete subtrees
+    deleteBST(root->left);
+    deleteBST(root->right);
+
+    // Delete current node
+    free(root);
+    root = NULL;
 }

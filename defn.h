@@ -23,6 +23,7 @@ struct bst{ // A binary search tree
     void printMax(bst * node);
     void heapify(float arr[], int n, int i);
     void heapSort(float arr[], int n);
+    void deleteBST(bst * node);
 };
 
 struct categories{
