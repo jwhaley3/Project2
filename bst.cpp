@@ -92,6 +92,21 @@ void printMax(bst * node, float price)
     printMax(node->right, price);
 
 }
+
+void printFree(bst * node)
+{
+    if (node == NULL)
+        return;
+    //traverse the left tree
+    printFree(node->left);
+
+    //Then print the information of the tree
+    if (node->record.price == 0.00)
+        std::cout << '\t' << node->record.app_name << '\n';
+
+    //Then print from the right subtree
+    printFree(node->right);
+}
 void heapify(float arr[], int n, int i)
 {
     int largest = i; // Initialize largest as root

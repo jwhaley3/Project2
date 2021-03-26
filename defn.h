@@ -24,6 +24,7 @@ struct bst{ // A binary search tree
     void heapify(float arr[], int n, int i);
     void heapSort(float arr[], int n);
     void deleteBST(bst * node);
+    void printFree(bst * node);
 };
 
 struct categories{

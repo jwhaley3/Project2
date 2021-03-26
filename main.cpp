@@ -89,9 +89,10 @@ int main() {
     //string will be useful in shortening the length of the if statements.
     string a = "print-apps";
     string b = "find";
+    string c = "range"; //There are 2 queries that start with this
 
     //Variables that are going to be used within both query operations.
-    string rawCatToSearch, catToSearch, useless, queryType;
+    string rawCatToSearch, catToSearch, useless, queryType, next;
 
     for (int i = 0; i < numQueries; i++) {
         cin >> queryType;
@@ -132,59 +133,139 @@ int main() {
 
 
         }
-        else if (b == queryType)
-        {
-            ////////////////////////////////////////////////
-            //find max price apps <category name>
-            ////////////////////////////////////////////////
-            //get rid of max price and apps
-            cin >> useless;
-            cin >> useless;
-            cin >> useless;
+        else if (b == queryType) {
+            cin >> next;
+            if (next == "max") {
+                ////////////////////////////////////////////////
+                //find max price apps <category name>
+                ////////////////////////////////////////////////
+                //get rid of price and apps
+                cin >> useless;
+                cin >> useless;
 
-            getline(cin, rawCatToSearch);// contains < "Social Networking"> Mind the space at the beginning
+                getline(cin, rawCatToSearch);// contains < "Social Networking"> Mind the space at the beginning
 
-            //Manipulating the string using substr to find the contents between the quotes (")
-            size_t pos = rawCatToSearch.find("\"");
-            catToSearch = rawCatToSearch.substr(pos + 1,rawCatToSearch.length() - 3);
+                //Manipulating the string using substr to find the contents between the quotes (")
+                size_t pos = rawCatToSearch.find("\"");
+                catToSearch = rawCatToSearch.substr(pos + 1, rawCatToSearch.length() - 3);
 
-            //catToSearch now contains the correct category with the proper formatting as what's already read into the
-            //array
-            //Find which BST this should be apart of
-            for (int j = 0; j < numCategories; j++)
+                //catToSearch now contains the correct category with the proper formatting as what's already read into the
+                //array
+                //Find which BST this should be apart of
+                for (int j = 0; j < numCategories; j++) {
+                    if (catToSearch == app_categories[j].category) {
+                        categoryIndex = j;
+                        break; //Don't run through everything once we get a match
+                    }
+                }//End of search loop
+                cout << "find max price apps" << rawCatToSearch << '\n';
+
+                if (app_categories[categoryIndex].root == nullptr)
+                    cout << "Category: \"" << catToSearch << "\" no apps found.\n\n";
+                else {
+                    //printInorder(app_categories[categoryIndex].root);
+
+                    //Create the array of floats
+                    float *heap = (float *) malloc(numApps * sizeof(float));
+                    //Traverse the tree and copy the info
+                    addToArray(app_categories[categoryIndex].root, heap, 0);
+
+                    //At this point, we have to traverse the tree and print all nodes with the price.
+                    buildHeap(heap, numApps);
+                    printMax(app_categories[categoryIndex].root, heap[0]);
+
+                    cout << "\n";
+                    //The heap is only used for this query, delete it before moving on to the next query.
+                    free(heap);
+                }
+
+
+            }
+            else if (next == "price"){
+                ///////////////////////////////////////////////
+                //find price free <category_name>
+                ///////////////////////////////////////////////
+                cin >> useless;
+
+                getline(cin, rawCatToSearch);// contains < "Social Networking"> Mind the space at the beginning
+
+                //Manipulating the string using substr to find the contents between the quotes (")
+                size_t pos = rawCatToSearch.find("\"");
+                catToSearch = rawCatToSearch.substr(pos + 1, rawCatToSearch.length() - 3);
+                //We now have the printing string "rawCatToSearch" and the usefull string catToSearch
+
+                //Find which BST this should be apart of
+                for (int j = 0; j < numCategories; j++) {
+                    if (catToSearch == app_categories[j].category) {
+                        categoryIndex = j;
+                        break; //Don't run through everything once we get a match
+                    }
+                }//End of search loop
+                if (catToSearch != app_categories[categoryIndex].category)
+                {
+                    cout << "Category " << catToSearch << " not found." << '\n';
+                    break;
+                }
+                if (app_categories[categoryIndex].root == nullptr)
+                    cout << "Category: \"" << catToSearch << "\" no free apps found.\n\n";
+                else {
+                    //At this point, we have to traverse the tree and print all nodes with the price.
+                    cout << "Free apps in category:" << rawCatToSearch << '\n';
+                    printFree(app_categories[categoryIndex].root);
+
+                    cout << "\n";
+                }
+
+            }
+            else if (next == "app")
             {
+                /////////////////////////////////////
+                //find app <app_name>
+                /////////////////////////////////////
+                //TODO - Implement Hash table in hash.cpp
+            }
+        }
+        else if (c == queryType)
+        {
+            ////////////////////////////
+            //Dealing with range
+            //input type  range <category name> price <low> <high>
+            ////////////////////////////
+            string wholeInput;
+
+            getline(cin, wholeInput); //contains  "category name" price float float //Mind the gap
+            size_t pos = wholeInput.find("\"");
+            catToSearch = wholeInput.substr(pos + 1, wholeInput.length());
+            pos = catToSearch.find("\"");
+            catToSearch = catToSearch.substr(0, pos); //catToSearch now contains category name
+            //In the test case, it contains Games as expected
+
+
+
+            //Find which BST this should be apart of
+            for (int j = 0; j < numCategories; j++) {
                 if (catToSearch == app_categories[j].category) {
                     categoryIndex = j;
                     break; //Don't run through everything once we get a match
                 }
             }//End of search loop
-            cout << "find max price apps" << rawCatToSearch << '\n';
 
-            if (app_categories[categoryIndex].root == nullptr)
-                cout << "Category: \"" << catToSearch << "\" no apps found.\n\n";
-            else {
-                //printInorder(app_categories[categoryIndex].root);
-
-                //Create the array of floats
-                float *heap = (float *) malloc(numApps * sizeof(float));
-                //Traverse the tree and copy the info
-                addToArray(app_categories[categoryIndex].root, heap, 0);
-
-                //At this point, we have to traverse the tree and print all nodes with the price.
-                buildHeap(heap, numApps);
-                printMax(app_categories[categoryIndex].root, heap[0]);
-
-                cout << "\n";
-                //The heap is only used for this query, delete it before moving on to the next query.
-                free(heap);
+            if (catToSearch != app_categories[categoryIndex].category)
+            {
+                cout << "Category " << catToSearch << " not found." << '\n';
+                break;
             }
-
+            if (app_categories[categoryIndex].root == nullptr)
+                cout << "No applications found in " << catToSearch << " for the given range " <<"\n\n";
+            else {
+                cout << "Applications in Price Range";
+            }
 
         }
         else
             cout << "";
 
-
+        //cout << queryType << "\t\t\t\t";
     }
 
     //Must destroy the BST
