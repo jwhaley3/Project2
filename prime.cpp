@@ -20,6 +20,12 @@ bool TestForPrime( int val )
     return( factor > limit );
 }
 
+int getPrime(int val) {
+    if (TestForPrime(val))
+        return val;
+    return getPrime(val + 1);
+}
+/*
 int main()
 {
     int i, n, p;
@@ -38,4 +44,6 @@ int main()
         else
             printf( "%d is not a prime.\n", p );
     }
+
 }
+*/

@@ -1,3 +1,5 @@
+#include <string>
+
 #define	CAT_NAME_LEN	25
 #define	APP_NAME_LEN	70
 #define	VERSION_LEN	10
@@ -25,6 +27,9 @@ struct bst{ // A binary search tree
     void heapSort(float arr[], int n);
     void deleteBST(bst * node);
     void printFree(bst * node);
+    void printInRange(bst* node, float high, float low);
+    void printInNumericalRange(bst * node, std::string start, std::string end);
+    void findApp(bst* node, std::string name);
 };
 
 struct categories{

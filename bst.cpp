@@ -1,4 +1,4 @@
-//#include "defn.h"
+#include "defn.h"
 #include <iostream>
 //
 // Created by Justin on 3/3/2021.
@@ -31,7 +31,6 @@ bst* insertNode(bst * node, app_info application)
 ////////////////////////////////////////////////////////
 //Given the root of the BST, going to traverse it (inorder)
 //and print out the information associated with it
-
 
 void printInorder(bst * node)
 {
@@ -75,7 +74,6 @@ int addToArray(bst * node, float arr[], int i)
 
     return i;
 }
-
 void printMax(bst * node, float price)
 {
     if (node == NULL)
@@ -92,7 +90,6 @@ void printMax(bst * node, float price)
     printMax(node->right, price);
 
 }
-
 void printFree(bst * node)
 {
     if (node == NULL)
@@ -101,11 +98,79 @@ void printFree(bst * node)
     printFree(node->left);
 
     //Then print the information of the tree
-    if (node->record.price == 0.00)
+    if (node->record.price == 0.00) {
         std::cout << '\t' << node->record.app_name << '\n';
+    }
 
     //Then print from the right subtree
     printFree(node->right);
+}
+void printInRange(bst* node, float high, float low)
+{
+
+    if (node == NULL)
+        return;
+    //traverse the left tree
+    printInRange(node->left, high, low);
+
+    //Then print the information of the tree
+    if (node->record.price >= low && node->record.price <= high) {
+        std::cout << '\t' << node->record.app_name << '\n';
+    }
+
+    //Then print from the right subtree
+    printInRange(node->right, high, low);
+    return;
+}
+bool printInRange(bst* node, float high, float low, bool flag)
+{
+
+    if (node == NULL)
+        return flag;
+    //traverse the left tree
+    printInRange(node->left, high, low, flag);
+
+    //Then print the information of the tree
+    if (node->record.price >= low && node->record.price <= high) {
+        flag = true;
+    }
+
+    //Then print from the right subtree
+    printInRange(node->right, high, low, flag);
+    return flag;
+}
+
+void findApp(bst* node, std::string name)
+{
+    if (node == NULL)
+        return;
+    //traverse the left tree
+    findApp(node->left, name);
+
+    //Then print the information of the tree
+    if (node->record.app_name == name) {
+        std::cout << '\t' << "Category: " << node->record.category << '\n';
+        std::cout << '\t' << "App Name: " << node->record.app_name << '\n';
+        std::cout << '\t' << "Version: " << node->record.version << '\n';
+        std::cout << '\t' << "Size: " << node->record.size << '\n';
+        std::cout << '\t' << "Units: " << node->record.units << '\n';
+        std::cout << '\t' << "Price: " << node->record.price << '\n';
+    }
+
+    //Then print from the right subtree
+    findApp(node->right, name);
+}
+void printInNumericalRange(bst * node, std::string start, std::string end)
+{
+    if (node == NULL)
+        return;
+    printInNumericalRange(node->left, start, end);
+
+    //Printing the information from the tree
+    if (strcmp(node->record.app_name, start.c_str()) >=0 && strcmp(node->record.app_name, end.c_str()) <= 0)
+        std::cout << '\t' << node->record.app_name << '\n';
+
+    printInNumericalRange(node->right, start, end);
 }
 void heapify(float arr[], int n, int i)
 {

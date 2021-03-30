@@ -3,6 +3,9 @@
 #include <cstring>
 #include "defn.h"
 #include "bst.cpp"
+//#include "hash.cpp"
+#include "prime.cpp"
+
 using namespace std;
 
 
@@ -40,6 +43,16 @@ int main() {
     ///////////////////////////////////////////////////////////////////////
     cin.ignore(100,'\n');
     //Loop to create the nodes for the apps
+
+    //Create the hash table
+    int hashFunction = TestForPrime(numApps*2);
+    hash_table_entry **hash_table;
+    hash_table = (struct hash_table_entry **) malloc( hashFunction * sizeof(struct hash_table_entry * ) );
+    free(hash_table);
+    for(int i = 0; i < hashFunction; i++ )
+        hash_table[ i ] = NULL;
+
+
     for (int i = 0; i < numApps; i++)
     {
         //Create the node using malloc
@@ -80,6 +93,11 @@ int main() {
         //Node created and added
 
     }//End of numApps for loop
+
+    /////////////////////////////////////////////////////////////////
+    //Go through all the categories and add all the information into a hash table
+    //strcpy(node->app_name, name.c_str());
+    //hash_table[i] = node;
 
     /////////////////////////////////////////////////////////////////
     //We have the nodes added at this point
@@ -222,7 +240,18 @@ int main() {
                 /////////////////////////////////////
                 //find app <app_name>
                 /////////////////////////////////////
-                //TODO - Implement Hash table in hash.cpp
+                string gameName;
+                //Search all categories in order to find the application with the matching application name
+                getline(cin, gameName);
+                gameName = gameName.substr(2, gameName.length() - 3); //contains only the name
+                bool found;
+                int k = 0;
+                for ( k = 0; k < numCategories; k++) {
+                    findApp(app_categories[k].root, gameName);
+                }
+
+
+
             }
         }
         else if (c == queryType)
@@ -239,33 +268,97 @@ int main() {
             pos = catToSearch.find("\"");
             catToSearch = catToSearch.substr(0, pos); //catToSearch now contains category name
             //In the test case, it contains Games as expected
-
-
-
-            //Find which BST this should be apart of
-            for (int j = 0; j < numCategories; j++) {
-                if (catToSearch == app_categories[j].category) {
-                    categoryIndex = j;
-                    break; //Don't run through everything once we get a match
-                }
-            }//End of search loop
-
-            if (catToSearch != app_categories[categoryIndex].category)
+            //Going to reduce whole input to everything after category name to ensure that catname isn't price, when searching
+            //for price
+            pos = wholeInput.find("\"");
+            string priceLowHigh = wholeInput.substr(pos, wholeInput.length());
+            pos = priceLowHigh.find("\"");
+            priceLowHigh = priceLowHigh.substr(pos, priceLowHigh.length());
+            pos = priceLowHigh.find(" ");
+            string test = priceLowHigh.substr(pos + 1, 3);
+            priceLowHigh = priceLowHigh.substr(pos, priceLowHigh.length());
+            if (test == "app")
             {
-                cout << "Category " << catToSearch << " not found." << '\n';
-                break;
+                //app test
+                pos = priceLowHigh.find("\"");
+                string firstVal = priceLowHigh.substr(pos + 1, priceLowHigh.length());
+                pos = firstVal.find("\"");
+                firstVal = firstVal.substr(0, pos);
+                //Now have obtained the first value
+                pos = priceLowHigh.find("\"");
+                string secondVal = priceLowHigh.substr(pos, priceLowHigh.length());
+                pos = secondVal.find("\"");
+                secondVal = secondVal.substr(pos+1, secondVal.length()-1);
+                pos = secondVal.find("\"");
+                secondVal = secondVal.substr(pos+1, secondVal.length());
+                pos = secondVal.find("\"");
+                secondVal = secondVal.substr(pos+1, secondVal.length()-3);
+
+
+                //Contains the second value
+                //Find which BST this should be apart of
+                for (int j = 0; j < numCategories; j++) {
+                    if (catToSearch == app_categories[j].category) {
+                        categoryIndex = j;
+                        break; //Don't run through everything once we get a match
+                    }
+                }//End of search loop
+
+                if (catToSearch != app_categories[categoryIndex].category) {
+                    cout << "Category " << catToSearch << " not found." << '\n';
+                    break;
+                }
+                if (app_categories[categoryIndex].root == nullptr)
+                    cout << "No applications found in " << catToSearch << " for the given range " << firstVal << " " << secondVal
+                         << "\n\n";
+                else {
+                    cout << "Applications in Price Range (" << firstVal << ", " << secondVal << ") in Category: " << catToSearch
+                         << "\n";
+
+                    printInNumericalRange(app_categories[categoryIndex].root, firstVal, secondVal);
+                    cout << "\n";
+
+                }
+
             }
-            if (app_categories[categoryIndex].root == nullptr)
-                cout << "No applications found in " << catToSearch << " for the given range " <<"\n\n";
             else {
-                cout << "Applications in Price Range";
+
+                //Should contain the two floats at this point
+                priceLowHigh = priceLowHigh.substr(7, priceLowHigh.length());
+                float low = -1;
+                low = stof(priceLowHigh.substr(0, 4));
+                float high = -1;
+                high = stof(priceLowHigh.substr(5, 4));
+
+
+                //Find which BST this should be apart of
+                for (int j = 0; j < numCategories; j++) {
+                    if (catToSearch == app_categories[j].category) {
+                        categoryIndex = j;
+                        break; //Don't run through everything once we get a match
+                    }
+                }//End of search loop
+
+                if (catToSearch != app_categories[categoryIndex].category) {
+                    cout << "Category " << catToSearch << " not found." << '\n';
+                    break;
+                }
+                if (app_categories[categoryIndex].root == nullptr ||
+                    printInRange(app_categories[categoryIndex].root, high, low, false) == false)
+                    cout << "No applications found in " << catToSearch << " for the given range " << low << " " << high
+                         << "\n\n";
+                else {
+                    cout << "Applications in Price Range (" << low << ", " << high << ") in Category: " << catToSearch
+                         << "\n";
+                    printInRange(app_categories[categoryIndex].root, high, low);
+
+                }
             }
 
         }
         else
             cout << "";
 
-        //cout << queryType << "\t\t\t\t";
     }
 
     //Must destroy the BST
