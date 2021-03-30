@@ -13,7 +13,5 @@ void insertToHash(bst* node, int key, int tableSize, std::string name)
 {
     int hash_val = HashFunc(key, tableSize);
 
-
-
     return;
 }

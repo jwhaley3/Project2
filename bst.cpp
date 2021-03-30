@@ -1,4 +1,4 @@
-#include "defn.h"
+//#include "defn.h"
 #include <iostream>
 //
 // Created by Justin on 3/3/2021.
@@ -150,11 +150,11 @@ void findApp(bst* node, std::string name)
     //Then print the information of the tree
     if (node->record.app_name == name) {
         std::cout << '\t' << "Category: " << node->record.category << '\n';
-        std::cout << '\t' << "App Name: " << node->record.app_name << '\n';
+        std::cout << '\t' << "Application Name: " << node->record.app_name << '\n';
         std::cout << '\t' << "Version: " << node->record.version << '\n';
         std::cout << '\t' << "Size: " << node->record.size << '\n';
         std::cout << '\t' << "Units: " << node->record.units << '\n';
-        std::cout << '\t' << "Price: " << node->record.price << '\n';
+        std::cout << '\t' << "Price: $" << node->record.price << "\n\n";
     }
 
     //Then print from the right subtree
@@ -218,4 +218,72 @@ void deleteBST(bst * root)
     // Delete current node
     free(root);
     root = NULL;
+}
+struct bst* minValueNode(struct bst* node)
+{
+    struct bst* current = node;
+
+    /* loop down to find the leftmost leaf */
+    while (current && current->left != NULL)
+        current = current->left;
+
+    return current;
+}
+struct bst * deleteSingleBST(bst * root, std::string name)
+{
+    // base case
+    if (root == NULL)
+        return root;
+
+    // If the key to be deleted
+    // is smaller than the root's
+    // key, then it lies in left subtree
+    if (std::strcmp(name.c_str(), root->record.app_name) < 0)
+        root->left = deleteSingleBST(root->left, name);
+
+        // If the key to be deleted
+        // is greater than the root's
+        // key, then it lies in right subtree
+    else if (std::strcmp(name.c_str(), root->record.app_name) > 0)
+        root->right = deleteSingleBST(root->right, name);
+
+        // if key is same as root's key,
+        // then This is the node
+        // to be deleted
+    else {
+        // node with only one child or no child
+        if (root->left == NULL) {
+            struct bst* temp = root->right;
+            free(root);
+            root = NULL;
+            return temp;
+        }
+        else if (root->right == NULL) {
+            struct bst* temp = root->left;
+            free(root);
+            root = NULL;
+            return temp;
+        }
+
+        // node with two children:
+        // Get the inorder successor
+        // (smallest in the right subtree)
+        struct bst* temp = minValueNode(root->right);
+
+        // Copy the inorder
+        // successor's content to this node
+        strcpy(root->record.category, temp->record.category);
+        strcpy(root->record.app_name, temp->record.app_name);
+        strcpy(root->record.version, temp->record.version);
+        root->record.size = temp->record.size;
+        strcpy(root->record.units, temp->record.units);
+        root->record.price = temp->record.price;
+
+
+
+        // Delete the inorder successor
+        root->right = deleteSingleBST(root->right, temp->record.app_name);
+    }
+    return root;
+
 }

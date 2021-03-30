@@ -30,6 +30,8 @@ struct bst{ // A binary search tree
     void printInRange(bst* node, float high, float low);
     void printInNumericalRange(bst * node, std::string start, std::string end);
     void findApp(bst* node, std::string name);
+    struct bst* deleteSingleBST(bst * node, std::string name);
+    struct bst* minValueNode(struct bst* node);
 };
 
 struct categories{
